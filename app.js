@@ -9,37 +9,133 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const CheckboxPrompt = require("inquirer/lib/prompts/checkbox");
+
+
 
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+var arrayOfEmployees = [];
 
-const questions = [
-    {
-        name: "eName",
-        type: "input",
-        message: "what is your name?"
-    },
+function collectEmployeeData () {
 
-    {
-        name: "eId",
-        type: "input",
-        message: "what is your ID number?"
-    }
+    const positionQuestions = [
+        {
+            name: "position",
+            type: "checkbox",
+            choices: ["Manager", "Intern", "Engineer"]
+        }
+    ];
 
-    {
-        name: "eEmail",
-        type: "input",
-        message: "what is your email?"
-    }
-]
+    //following to prompt questions for all employee (refer to "employee.js" file)
+    inquirer.prompt(positionQuestions)
+        .then(function (response) {
+        
+            if (response.position.length === 0) {
+                arrayOfEmployees.forEach(function(emp){console.log(emp.getName());});
+            } else {
+
+                let questions = [
+                    {
+                        name: "eName",
+                        type: "input",
+                        message: "what is your name?"
+                    },
+
+                    {
+                        name: "eId",
+                        type: "input",
+                        message: "what is your ID number?"
+                    },
+
+                    {
+                        name: "eEmail",
+                        type: "input",
+                        message: "what is your email?"
+                    }
+                ]
+                if (response.position[0] === "Manager") {
+                    questions.push({
+                        name: "eOfficeNumber",
+                        type: "input",
+                        message: "What's the Office Number?"
+
+                    })
+
+                    inquirer.prompt(questions)
+                        .then(function (responseforempdata) {
+                            assignedEmployee = new Manager(responseforempdata.eName, responseforempdata.eId, responseforempdata.eEmail, responseforempdata.eOfficeNumber);
+                            arrayOfEmployees.push(assignedEmployee);
+                            collectEmployeeData();
+                        });
+
+
+
+
+
+                }
+
+                if (response.position[0] === "Intern") {
+                    questions.push({
+                        name: "eSchool",
+                        type: "input",
+                        message: "Where did you go to school?"
+
+                    })
+
+                    inquirer.prompt(questions)
+                        .then(function (responseforempdata) {
+                            assignedEmployee = new Intern(responseforempdata.eName, responseforempdata.eId, responseforempdata.eEmail, responseforempdata.eSchool);
+                            arrayOfEmployees.push(assignedEmployee);
+                            collectEmployeeData();
+                        });
+
+
+
+
+
+
+
+
+                }
+                if (response.position[0] === "Engineer") {
+                    questions.push({
+                        name: "eGithub",
+                        type: "input",
+                        message: "What is your Github username?"
+
+                    })
+
+                    inquirer.prompt(questions)
+                        .then(function (responseforempdata) {
+                            assignedEmployee = new Engineer(responseforempdata.eName, responseforempdata.eId, responseforempdata.eEmail, responseforempdata.eGithub);
+                            arrayOfEmployees.push(assignedEmployee);
+                            collectEmployeeData();
+                        });
+
+
+
+                }
+            }
+
+        })
+
+}
+
+
+
+
+collectEmployeeData();
+
+
+
+
 
 //use prompt to get user input
 //save answers and
-inquirer.prompt(questions)
-.then(function(answers){
 
-})
+
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!

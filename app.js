@@ -31,9 +31,18 @@ function collectEmployeeData () {
     //following to prompt questions for all employee (refer to "employee.js" file)
     inquirer.prompt(positionQuestions)
         .then(function (response) {
-        
+    
             if (response.position.length === 0) {
-                arrayOfEmployees.forEach(function(emp){console.log(emp.getName());});
+            // checking the array of list, if array is empty render the data to HTML
+               
+                let renderedHtml  = render(arrayOfEmployees);
+                 //push data to render html
+                fs.writeFile("team.html", renderedHtml, function(err){
+                    if(err){
+                        return console.log(err)
+                    }
+                    console.log("Completed!")
+                })
             } else {
 
                 let questions = [
